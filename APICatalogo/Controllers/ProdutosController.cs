@@ -16,11 +16,11 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpGet("first")]
-    public ActionResult<Produto>GetPrimeiro()
+    public IActionResult<Produto>GetPrimeiro()
     { 
         var produto = _context.Produtos?.FirstOrDefault();
         if(produto is null) return NotFound("Produto não encontrado");
-        return produto;
+        return Ok(produto);
     }
 
     [HttpGet]
@@ -31,7 +31,7 @@ public class ProdutosController : ControllerBase
         return produtos;
     }
 
-    [HttpGet("{id:int}", Name="ObterProduto")]
+    [HttpGet("{id:int:min(1)}", Name="ObterProduto")]
     public ActionResult<Produto> Get(int id) 
     {
         var produtos = _context.Produtos?.FirstOrDefault(p => p.ProdutoId == id);
