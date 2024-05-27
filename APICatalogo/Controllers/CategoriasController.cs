@@ -22,12 +22,10 @@ public class CategoriasController : ControllerBase
     {
         try {
             
-            var categorias = _context.Categorias.AsNoTracking().ToList();
+            var categorias = _context.Categorias?.AsNoTracking().ToList();
             return categorias;
 
         } catch (Exception) { return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tratar sua soicitação"); }
-
-
 
     }
 
@@ -35,7 +33,7 @@ public class CategoriasController : ControllerBase
     public ActionResult<Categoria> Get(int id)
     {
 
-        var categoria = _context.Categorias.AsNoTracking().FirstOrDefault(p => p.CategoriaId == id);
+        var categoria = _context.Categorias?.AsNoTracking().FirstOrDefault(p => p.CategoriaId == id);
         if (categoria is null) return NotFound($"Categoria id{id} não encontrada");
         return categoria;
 
@@ -44,15 +42,15 @@ public class CategoriasController : ControllerBase
     [HttpGet("produtos")]
     public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
     { 
-
-        return _context.Categorias.Include(p => p.Produtos).ToList();
+        var lista = _context.Categorias?.Include(p => p.Produtos).ToList(); 
+        return lista;
     
     }
 
     [HttpPost]
     public ActionResult Post(Categoria categoria)
     {
-        _context.Categorias.Add(categoria);
+        _context.Categorias?.Add(categoria);
         _context.SaveChanges();
         return new CreatedAtRouteResult("ObterCategoria", new { id = categoria.CategoriaId }, categoria);
     }
@@ -71,9 +69,9 @@ public class CategoriasController : ControllerBase
     public ActionResult Delete(int id)
     {
         
-        var categoria = _context.Categorias.Find(id);
+        var categoria = _context.Categorias?.Find(id);
         if (categoria is null) return NotFound("Categoria não encontrada");
-        _context.Categorias.Remove(categoria);
+        _context.Categorias?.Remove(categoria);
         _context.SaveChanges();
         return Ok(categoria);
     }
