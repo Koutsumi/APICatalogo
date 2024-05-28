@@ -1,5 +1,6 @@
 ﻿using APICatalogo.Models.Context;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace APICatalogo.Controllers;
@@ -16,25 +17,26 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpGet("first")]
-    public IActionResult<Produto>GetPrimeiro()
+    public ActionResult<Produto>GetPrimeiro()
     { 
         var produto = _context.Produtos?.FirstOrDefault();
         if(produto is null) return NotFound("Produto não encontrado");
-        return Ok(produto);
+        return produto;
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Produto>>Get()
+    public async Task<ActionResult<IEnumerable<Produto>>>Get()
     { 
-        var produtos = _context.Produtos?.ToList();
+        var produtos = await _context.Produtos!.ToListAsync();
         if(produtos is null) return NotFound("Produtos não encontrados");
         return produtos;
     }
 
     [HttpGet("{id:int:min(1)}", Name="ObterProduto")]
-    public ActionResult<Produto> Get(int id) 
+    public async Task<ActionResult<Produto>> Get(int id,[BindRequired] string nome) 
     {
-        var produtos = _context.Produtos?.FirstOrDefault(p => p.ProdutoId == id);
+        var nomeProduto = nome;
+        var produtos = await _context.Produtos!.FirstOrDefaultAsync(p => p.ProdutoId == id);
         if (produtos is null) return NotFound("Produto não encontrado");
         return produtos;
     }

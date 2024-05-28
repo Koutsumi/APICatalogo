@@ -23,6 +23,7 @@ public class CategoriasController : ControllerBase
         try {
             
             var categorias = _context.Categorias?.AsNoTracking().ToList();
+            if(categorias is null) return NotFound("Não há categorias cadastradas");
             return categorias;
 
         } catch (Exception) { return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tratar sua soicitação"); }
@@ -43,6 +44,7 @@ public class CategoriasController : ControllerBase
     public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
     { 
         var lista = _context.Categorias?.Include(p => p.Produtos).ToList(); 
+        if (lista is null) return NotFound("Categoria Produtos não cadastrados");
         return lista;
     
     }
